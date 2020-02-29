@@ -11,7 +11,6 @@
         <li class="active">Here</li>
       </ol>
     </section>
-
     <!-- Main content -->
     <section class="content">
 
