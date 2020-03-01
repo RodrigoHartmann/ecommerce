@@ -2,7 +2,7 @@
 
 namespace Hcode\Model;
 
-use \Hcode\model;
+use \Hcode\Model;
 use \Hcode\DB\Sql;
 use \Hcode\Mailer;
 
@@ -54,7 +54,7 @@ class User extends Model {
 	public static function listAll(){
 
 		$sql = new Sql();
-		return $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) ORDER BY b.desperson");
+		return $sql->select("SELECT * FROM `tb_users` a INNER JOIN `tb_persons` b USING(idperson) ORDER BY b.desperson");
 	}
 
 	public function save(){
@@ -75,7 +75,7 @@ class User extends Model {
 	public function get($iduser){
 
 		$sql = new Sql();
-		$results =  $sql->select("SELECT * FROM tb_users a IINER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser", array(
+		$results =  $sql->select("SELECT * FROM `tb_users` a INNER JOIN `tb_persons` b USING(idperson) WHERE a.iduser = :iduser", array(
 			":iduser"=>$iduser
 		));
 
@@ -226,16 +226,15 @@ class User extends Model {
 
 		$sql = new Sql();
 		$sql->query("UPDATE tb_userspasswordsrecoveries SET dtrecovery = NOW() WHERE idrecovery = :idrecovery", array(
-        ":idrecovery"=$idrecovery
-		));
+        ":idrecovery"=>$idrecovery
+    ));
 	}
 
 	public function setPassword(){
      $sql = new Sql();
      $sql->query("UPDATE tb_users SET despassword = :password where iduser = :iduser", array(
      ":password"=>$password,
-     ":iduser"=>$this->getiduser();
-
+     ":iduser"=>$this->getiduser()
      ));
 
 	}

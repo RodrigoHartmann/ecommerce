@@ -6,6 +6,7 @@ use \Slim\Slim;
 use \Hcode\Page;
 use \Hcode\PageAdmin;
 use \Hcode\Model\User;
+use \Hcode\Model\Category;
 
 $app = new Slim();
 
@@ -56,9 +57,7 @@ $app->get('/logout', function(){
 $app->get("/users/:iduser/delete", function($iduser){
 
   User::verifyLogin();
-
   $user = new User();
-
   $user->get((int)$iduser);
   $user->delete();
   header("Location: /users/");
@@ -97,13 +96,12 @@ $app->get("/users/:iduser", function($iduser){
 $app->post("/users/create", function () {
 
   User::verifyLogin();
-
-  $user = new User();
   $user = new User();
   $_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 0;
   $user->setData($_POST);
   $user->save();
   header("localtion: /users");
+  exit;
 });
 
 
@@ -158,19 +156,71 @@ $app->get("/forgot/reset", function(){
 
 $app->post("/forgot/reset", function(){
   $forgot = User::validForgotDecrypt($_GET["code"]);
-  User:: = setForgotUsed($user["idcovery"]);
+  User::setForgotUsed($user["idcovery"]);
   $user = new User();
   $user->get((int)$forgot["iduser"]);
   $password = password_hash($_POST["password"], PASSWORD_DEFAULT,[
-  "cost"=>12
-  ])
-
+    "cost"=>12
+  ]);
   $user->setPassword($password);
   $page = new PageAdmin([
-  "header"=>false,
-  "footer"=>false
+    "header"=>false,
+    "footer"=>false
   ]);
   $page->setTpl("fotgot-reset-sucess");
+});
+
+$app->get("/categories", function (){
+  User::verifyLogin();
+  $categories = Category::listAll();  
+  $page = new PageAdmin();
+  $page->setTpl("categories", [
+   'categories'=>$categories
+ ]);
+});
+
+$app->get("/categories/create", function (){
+  User::verifyLogin();
+  $page = new PageAdmin();
+  $page->setTpl("categories-create");
+});
+
+$app->post("/categories/create", function (){
+ User::verifyLogin();
+ $category = new Category();
+ $category->setData($_POST);
+ $category->save();
+ header("Location: /categories");
+ exit;
+});
+
+$app->get("/categories/:idcategory/delete", function ($idcategory){
+  User::verifyLogin();
+  $category = new Category();
+  $category->get((int)$idcategory);
+  $category->delete();
+  header("Location: /categories");
+  exit;
+});
+
+$app->get("/categories/:idcategory", function ($idcategory){
+  User::verifyLogin();
+  $category = new Category();
+  $category->get((int)$idcategory);
+  $page = new PageAdmin();
+  $page->setTpl("categories-update", [
+    "category"=>$category->getValues()
+  ]);
+});
+
+$app->post("/categories/:idcategory", function ($idcategory){
+  User::verifyLogin();
+  $category = new Category();
+  $category->get((int)$idcategory);
+  $category->setData($_POST);
+  $category->save();
+  header("Location: /categories");
+  exit;
 });
 
 $app->run();
