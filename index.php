@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once("vendor/autoload.php");
-
 use \Slim\Slim;
 use \Hcode\Page;
 use \Hcode\PageAdmin;
@@ -15,19 +14,14 @@ $app->config('debug', true);
 $app->get('/', function() {
 
   $page = new Page();
-
   $page->setTpl("index");
-
 });
 
 $app->get('/admin', function() {
 
   User::verifyLogin();
-
   $page = new PageAdmin();
-
   $page->setTpl("index");
-
 });
 
 $app->get('/login', function(){
@@ -42,7 +36,6 @@ $app->get('/login', function(){
 $app->post('/admin/login', function(){
 
   User::login($_POST['login'], $_POST['password']);
-
   header("Location: /admin");
   exit;
 });
@@ -64,7 +57,7 @@ $app->get("/users/:iduser/delete", function($iduser){
   exit;
 });
 
-$app->get("/users/", function(){
+$app->get("/users/", function(){ //Rota para o usuário cadastrado logado no sistema.
 
   User::verifyLogin();
   $users = User::listAll();
@@ -74,17 +67,27 @@ $app->get("/users/", function(){
  ));
 });
 
-$app->get("/users/create", function(){
+$app->get("/users/create", function(){ //Rota para criar o usuário
 
   User::verifyLogin();
   $page = new PageAdmin();
   $page->setTpl("users-create");
 });
 
-$app->get("/users/:iduser", function($iduser){
+$app->post("/users/create", function () { //Rota para salvar o usuário
 
   User::verifyLogin();
+  $user = new User();
+  $_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 0;
+  $user->setData($_POST);
+  $user->save();
+  header("location: /users/");
+  exit;
+});
 
+$app->get("/users/:iduser", function($iduser){ //Rota para editar o usuário.
+
+  User::verifyLogin();
   $user = new User();
   $user->get((int)$iduser);
   $page = new PageAdmin();
@@ -93,28 +96,15 @@ $app->get("/users/:iduser", function($iduser){
   ));
 });
 
-$app->post("/users/create", function () {
-
-  User::verifyLogin();
-  $user = new User();
-  $_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 0;
-  $user->setData($_POST);
-  $user->save();
-  header("localtion: /users");
-  exit;
-});
-
-
-$app->post("/users/:iduser", function($iduser){
-
-  User::verifyLogin();
-  $user = new User();
-  $_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 0;
-  $user->get((int)$iduser);
-  $user->setData($_POST);
-  $user->update();
-  header("localtion: /users");
-  exit;    
+$app->post("/users/:iduser", function($iduser){ //Rota para slavar no banco a edição do usuário
+ User::verifyLogin();
+ $user = new User();
+ $_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 0;
+ $user->get((int)$iduser);
+ $user->setData($_POST);
+ $user->update();
+ header("Location: /users/");
+ exit;
 });
 
 $app->get("/forgot", function(){
@@ -213,6 +203,15 @@ $app->get("/categories/:idcategory", function ($idcategory){
   ]);
 });
 
+$app->get("/category/:idcategory", function ($idcategory){
+  $category = new Category();
+  $category->get((int)$idcategory);
+  $page = new Page();
+  $page->setTpl("category",[
+  "category"=>$category->getValues()
+  ]);
+});
+
 $app->post("/categories/:idcategory", function ($idcategory){
   User::verifyLogin();
   $category = new Category();
@@ -222,7 +221,6 @@ $app->post("/categories/:idcategory", function ($idcategory){
   header("Location: /categories");
   exit;
 });
-
 $app->run();
 
 ?>
