@@ -254,10 +254,11 @@ desired effect
 
       <!-- Sidebar Menu -->
       <ul class="sidebar-menu">
-        <li class="header">HEADER</li>
+        <li class="header">Menu</li>
         <!-- Optionally, you can add icons to the links -->
         <li class="active"><a href="/users"><i class="fa fa-users"></i> <span>Usuários</span></a></li>
         <li><a href="/categories"><i class="fa fa-link"></i> <span>Categorias</span></a></li>
+        <li><a href="/products"><i class="fa fa-cart-arrow-down"></i> <span>Produtos</span></a></li>
         <li class="treeview">
           <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>
             <span class="pull-right-container">
