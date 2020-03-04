@@ -4,6 +4,7 @@ use \Slim\Slim;
 use \Hcode\Page;
 use \Hcode\PageAdmin;
 use \Hcode\Model\User;
+use \Hcode\Model\Product;
 use \Hcode\Model\Category;
 
 $app->get("/categories/create", function (){
@@ -66,5 +67,36 @@ $app->get("/categories", function (){
   $page->setTpl("categories", [
    'categories'=>$categories
  ]);
+});
+
+$app->get("/categories/:idcategories/products", function($idcategory){
+$category = new Category();
+$category->get((int)$idcategory);
+$page = new PageAdmin();
+$page->setTpl("categories-products", [
+'category'=>$category->getValues(),
+'productsRelated'=>$category->getProducts(),
+'productsNotRelated'=>$category->getProducts(false)
+]); 
+});
+
+$app->get("/categories/:idcategories/products/:idproduct/add", function($idcategory, $idproduct){
+$category = new Category();
+$category->get((int)$idcategory);
+$product = new Product();
+$product->get((int)$idproduct); 
+$category->addProduct($product);
+header("Location: /categories/".$idcategory."/products");
+exit; 
+});
+
+$app->get("/categories/:idcategories/products/:idproduct/remove", function($idcategory, $idproduct){
+$category = new Category();
+$category->get((int)$idcategory);
+$product = new Product();
+$product->get((int)$idproduct); 
+$category->removeProduct($product);
+header("Location: /categories/".$idcategory."/products");
+exit; 
 });
 ?>
