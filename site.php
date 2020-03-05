@@ -5,11 +5,11 @@ use \Hcode\Model\Product;
 use \Hcode\Model\Category;
 
 $app->get('/', function() {
-  $products = Product::listAll();
-  $page = new Page();
-  $page->setTpl("index", [
-  'products'=>Product::checkList($products)
-  ]);
+	$products = Product::listAll();
+	$page = new Page();
+	$page->setTpl("index", [
+		'products'=>Product::checkList($products)
+	]);
 });
 
 $app->get("/category/:idcategory", function($idcategory){
@@ -33,4 +33,16 @@ $app->get("/category/:idcategory", function($idcategory){
 		'pages'=>$pages
 	]);
 });
+
+$app->get("/products/:desurl", function($desurl){
+
+	$product = new Product();
+	$product->getFromUrl($desurl);
+	$page = new Page();
+	$page->setTpl("product-detail",[
+		'product'=>$product->getValues(),
+		'category'=>$product->getCategories()
+	]);
+});
+
 ?>
