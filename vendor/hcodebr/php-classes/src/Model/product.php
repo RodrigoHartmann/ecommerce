@@ -29,8 +29,7 @@ class Product extends Model {
 	{
 
 		$sql = new Sql();
-
-		$results = $sql->select("CALL sp_products_save(:idproduct, :desproduct, :vlprice, :vlwidth, :vlheight, :vllength, :vlweight, :desurl)", array(
+		$results = $sql->select("CALL sp_products_save(:idproduct, :desproduct, :vlprice, :vlwidth,:vlheight, :vllength,:vlweight, :desurl)", array(
 			":idproduct"=>$this->getidproduct(),
 			":desproduct"=>$this->getdesproduct(),
 			":vlprice"=>$this->getvlprice(),
@@ -40,7 +39,7 @@ class Product extends Model {
 			":vlweight"=>$this->getvlweight(),
 			":desurl"=>$this->getdesurl()
 		));
-
+		
 		$this->setData($results[0]);
 	}
 
@@ -124,15 +123,15 @@ public function setPhoto($file){
 
 	$this->checkPhoto();
    }
+	public function getFromURL($desurl)
+	{
+		$sql = new Sql();
+		$rows = $sql->select("SELECT * FROM `tb_products` where desurl = :desurl LIMIT 1", [
+			':desurl'=>$desurl
+		]);
 
-   public function getFromUrl($desurl){
-    
-    $sql = new Sql();
-    $rows = $sql->select("SELECT * FROM `tb_products` WHERE `desurl` = :desurl LIMIT 1", [
-     ':desurl'=>$desurl
-    ]);
-    $this->setData($rows[0]);
-   }   
+		$this->setData($rows[0]);
+	}  
 
    public function getCategories(){
 

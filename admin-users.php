@@ -56,7 +56,7 @@ $app->get("/users/:iduser", function($iduser){ //Rota para editar o usuário.
   ));
 });
 
-$app->post("/users/:iduser", function($iduser){ //Rota para slavar no banco a edição do usuário
+$app->post("/users/:iduser", function($iduser){ //Rota para salvar no banco a edição do usuário
  User::verifyLogin();
  $user = new User();
  $_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 0;
