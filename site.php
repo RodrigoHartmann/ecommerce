@@ -4,6 +4,8 @@ use \Hcode\Page;
 use \Hcode\Model\Product;
 use \Hcode\Model\Category;
 Use \Hcode\Model\Cart;
+Use \Hcode\Model\Address;
+Use \Hcode\Model\User;
 
 $app->get('/', function() {
 	$products = Product::listAll();
@@ -51,7 +53,8 @@ $app->get("/cart", function(){
 	$page = new Page();
 	$page->setTpl("cart", [
 		'cart'=>$cart->getValues(),
-		'products'=>$cart->getProducts()
+		'products'=>$cart->getProducts(),
+		'error'=>Cart::getMsgError()
 	]);
 });
 
@@ -85,6 +88,23 @@ $app->get("/cart/:idproduct/remove", function($idproduct){
  $cart->removeProduct($product, true);
  header("Location: /cart");
  exit;
+});
+
+$app->post("/cart/freight", function (){
+   $cart = Cart::getFromSession();
+   $cart->setFreight($_POST['zipcode']);
+   header("Location: /cart");
+   exit;
+});
+
+$app->get("/checkout", function (){
+	User::verifyLogin(false);
+	$cart = Cart::getFromSession();
+	$address = new Address();
+	$page = new Page();
+	$page->setTpl("checkout",[
+		'cart'=>$cart->getValues(),
+	]);
 });
 
 ?>
